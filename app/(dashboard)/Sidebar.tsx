@@ -1,11 +1,12 @@
 import Logo from '@/app/_components/Logo'
-import { Boxes, LayoutGrid, Settings } from 'lucide-react'
+import { Boxes, LayoutGrid, Settings, LogOut } from 'lucide-react'
 import Link from 'next/link'
 
 const links = [
   { href: '/', name: 'Issues', Icon: Boxes },
   { href: '/projects', name: 'Projects', Icon: LayoutGrid },
   { href: '/settings', name: 'Settings', Icon: Settings },
+  { href: '/logout', name: 'Logout', Icon: LogOut },
 ]
 
 const Sidebar = () => {

@@ -9,4 +9,8 @@ export const setToken = (token: string) => {
     return localStorage.setItem(tokenKey, token)
 }
 
+export const deleteToken = () => {
+  if (typeof window !== 'undefined') return localStorage.removeItem(tokenKey)
+}
+
 export const isAuth = () => Boolean(getToken())
