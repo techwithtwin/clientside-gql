@@ -65,6 +65,8 @@ const IssuesPage = () => {
       if (res.data) {
         close()
         refetchIssues()
+        setIssueName('')
+        setIssueDescription('')
       }
     }
   }
