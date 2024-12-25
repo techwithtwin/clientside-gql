@@ -18,6 +18,7 @@ import {
 import { PlusIcon } from 'lucide-react'
 import Issue from '../_components/Issue'
 import { IssuesQuery } from '@/gql/issuesQuery'
+import { CreateIssueMutation } from '@/gql/createIssueMutation'
 
 type Issue = {
   id: string
@@ -28,15 +29,45 @@ const IssuesPage = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [issueName, setIssueName] = useState('')
   const [issueDescription, setIssueDescription] = useState('')
-  const [res, getIssues] = useQuery<{
-    issues: Issue[]
-  }>({
+  const [{ data, error, fetching }, refetchIssues] = useQuery<
+    {
+      issues: Issue[]
+    },
+    {
+      input: {
+        statuses: string[] | null
+      }
+    }
+  >({
     query: IssuesQuery,
+    variables: {
+      input: {
+        statuses: null,
+      },
+    },
   })
 
-  console.log(res)
-
-  const onCreate = async (close) => {}
+  const [_, createIssue] = useMutation<
+    any,
+    {
+      input: {
+        name: string
+        content: string
+        status?: string
+      }
+    }
+  >(CreateIssueMutation)
+  const onCreate = async (close) => {
+    if (issueName && issueDescription) {
+      const res = await createIssue({
+        input: { name: issueName, content: issueDescription },
+      })
+      if (res.data) {
+        close()
+        refetchIssues()
+      }
+    }
+  }
 
   return (
     <div>
@@ -50,12 +81,14 @@ const IssuesPage = () => {
           </button>
         </Tooltip>
       </PageHeader>
-
-      {res.data?.issues.map((issue) => (
-        <div key={issue.id}>
-          <Issue issue={issue} />
-        </div>
-      ))}
+      {error && <div>{error.message}</div>}
+      {fetching && <Spinner />}
+      {data &&
+        data.issues.map((issue) => (
+          <div key={issue.id}>
+            <Issue issue={issue} />
+          </div>
+        ))}
 
       <Modal
         size="2xl"
