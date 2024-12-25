@@ -17,11 +17,24 @@ import {
 } from '@nextui-org/react'
 import { PlusIcon } from 'lucide-react'
 import Issue from '../_components/Issue'
+import { IssuesQuery } from '@/gql/issuesQuery'
 
+type Issue = {
+  id: string
+  status: string
+  name: string
+}
 const IssuesPage = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [issueName, setIssueName] = useState('')
   const [issueDescription, setIssueDescription] = useState('')
+  const [res, getIssues] = useQuery<{
+    issues: Issue[]
+  }>({
+    query: IssuesQuery,
+  })
+
+  console.log(res)
 
   const onCreate = async (close) => {}
 
@@ -38,7 +51,7 @@ const IssuesPage = () => {
         </Tooltip>
       </PageHeader>
 
-      {[].map((issue) => (
+      {res.data?.issues.map((issue) => (
         <div key={issue.id}>
           <Issue issue={issue} />
         </div>
